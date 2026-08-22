@@ -1,0 +1,2 @@
+# MagicTerminal
+A CLI tool
