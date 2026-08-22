@@ -7,27 +7,41 @@ import (
 )
 
 func main() {
-	// 1. Define a "check" flag. By default, it is false.
-	runCheck := flag.Bool("check", false, "Run background system state check")
-	
-	// 2. Parse the arguments you type after the word "magic"
+
+	runHelp := flag.Bool("help", false, "Display help information")
+	runDirCheck := flag.Bool("dir-check", false, "Check directory context")
+
+
 	flag.Parse()
 
-	// 3. If you DID NOT type "magic --check", do not run the git scans!
-	if !*runCheck {
-		fmt.Println("👋 Welcome to Magic Command Loader.")
-		fmt.Println("Type 'magic --check' to scan your folder context.")
+	if *runHelp {
+		if *runHelp {
+			fmt.Println(`
+Help Information:
+	
+Usage: magic [options]
+	
+Options:
+  --help         Display help information
+  --dir-check    Check directory context`)
+			return
+		}	
 		return
 	}
 
-	// 4. This only runs if you explicitly type: magic --check
-	cmd := exec.Command("git", "status", "--porcelain")
-	_, err := cmd.Output()
+	if *runDirCheck {
+		cmd := exec.Command("git", "status", "--porcelain")
+		_, err := cmd.Output()
 
-	if err != nil {
-		fmt.Println("📂 Context: Standard Windows Directory")
-		return
+		if err != nil {
+			fmt.Println("📂 Context: Standard Directory")
+			return
+		}
+
+		fmt.Println("🌲 Context: Git Repository")
+		return // Stop the application here
 	}
 
-	fmt.Println("🌲 Context: Git Repository Detected")
+	fmt.Println("👋 Welcome to MagicTerminal.")
+	fmt.Println("Type 'magic --help' to see available options.")
 }
