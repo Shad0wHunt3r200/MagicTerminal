@@ -15,17 +15,14 @@ func main() {
 	flag.Parse()
 
 	if *runHelp {
-		if *runHelp {
-			fmt.Println(`
+		fmt.Println(`
 Help Information:
-	
+
 Usage: magic [options]
-	
+
 Options:
-  --help         Display help information
-  --dir-check    Check directory context`)
-			return
-		}	
+--help         Display help information
+--dir-check    Check directory context`)
 		return
 	}
 
