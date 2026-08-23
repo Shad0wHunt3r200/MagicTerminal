@@ -1,3 +1,3 @@
-module magic-command
+module magicTerminal
 
 go 1.27.0
