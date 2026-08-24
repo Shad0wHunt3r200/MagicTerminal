@@ -1,44 +1,47 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"os"
 	"os/exec"
+
+	"github.com/spf13/cobra"
 )
 
 func main() {
-
-	runHelp := flag.Bool("help", false, "Display help information")
-	runDirCheck := flag.Bool("dir-check", false, "Check directory context")
-
-
-	flag.Parse()
-
-	if *runHelp {
-		fmt.Println(`
-Help Information:
-
-Usage: magic [options]
-
-Options:
---help         Display help information
---dir-check    Check directory context`)
-		return
+	// root command setup
+	var rootCmd = &cobra.Command{
+		Use:   "magic",
+		Short: "MagicTerminal main command",
+		Run: func(cmd *cobra.Command, args []string) {
+			// This runs if user types 'magic' with no flags or subcommands
+			fmt.Println("👋 Welcome to MagicTerminal.\nType 'magic --help' to see available options.")
+		},
 	}
 
-	if *runDirCheck {
-		cmd := exec.Command("git", "status", "--porcelain")
-		_, err := cmd.Output()
+	var dirCheckCmd = &cobra.Command{
+		Use:   "dir-check",
+		Short: "Check directory context",
+		Run: func(cmd *cobra.Command, args []string) {
+			gitCmd := exec.Command("git", "status", "--porcelain")
+			_, err := gitCmd.Output()
 
-		if err != nil {
-			fmt.Println("📂 Context: Standard Directory")
-			return
-		}
+			if err != nil {
+				fmt.Println("📂 Context: Standard Directory")
+				return
+			}
 
-		fmt.Println("🌲 Context: Git Repository")
-		return // Stop the application here
+			fmt.Println("🌲 Context: Git Repository")
+		},
 	}
 
-	fmt.Println("👋 Welcome to MagicTerminal.")
-	fmt.Println("Type 'magic --help' to see available options.")
+	// Link the sub-command to the root command
+	rootCmd.AddCommand(dirCheckCmd)
+
+	// Start the Cobra engine
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
+	if err := rootCmd.Execute(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
